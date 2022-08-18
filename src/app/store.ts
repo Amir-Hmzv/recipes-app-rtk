@@ -1,17 +1,14 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
-
+import {recipeApi} from '../services/recipeApi'
+import {setupListeners} from '@reduxjs/toolkit/dist/query'
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    [recipeApi.reducerPath] : recipeApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware().concat(recipeApi.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
+setupListeners(store.dispatch)
